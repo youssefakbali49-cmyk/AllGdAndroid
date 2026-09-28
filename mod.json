@@ -1,5 +1,5 @@
 {
-	"geode": "3.0.0",
+	"geode": ">=3.0.0",
 	"gd": {
 		"win": "2.206",
 		"android": "2.206"
@@ -7,6 +7,6 @@
 	"id": "youssef.allgdachieve",
 	"name": "AllGDAchieve",
 	"version": "v1.0.0",
-	"developer": "Youssef",
-	"description": "Mod pour debloquer et synchroniser les succes."
+	"developer": "MYTHIQUE361",
+	"description": "Ce mod est concue pour jouer au autre version de gd avec leur succés."
 }
