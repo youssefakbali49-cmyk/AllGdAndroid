@@ -10,7 +10,7 @@ protected:
 
         auto winSize = CCDirector::sharedDirector()->getWinSize();
 
-        // Fond sombre
+        // Fond
         auto bg = CCSprite::create("GJ_gradientBG.png");
         if (bg) {
             bg->setPosition(winSize / 2);
@@ -35,58 +35,51 @@ protected:
         label->setPosition({winSize.width / 2, winSize.height - 35});
         this->addChild(label);
 
-        // Menu principal pour les boutons de niveaux
+        // Menu de boutons
         auto levelMenu = CCMenu::create();
         levelMenu->setPosition(winSize / 2);
 
-        // Bouton Meltdown (Niveau 1001)
-        auto btnMeltdown = CCMenuItemSpriteExtra::create(
-            ButtonSprite::create("Meltdown"),
+        // Bouton Press Start (SubZero)
+        auto btnPressStart = CCMenuItemSpriteExtra::create(
+            ButtonSprite::create("Press Start"),
             this,
-            menu_selector(SpinOffMenu::onMeltdown)
+            menu_selector(SpinOffMenu::onPressStart)
         );
 
-        // Bouton World (Niveau 2001)
-        auto btnWorld = CCMenuItemSpriteExtra::create(
-            ButtonSprite::create("World"),
+        // Bouton The Seven Seas (Meltdown)
+        auto btnSevenSeas = CCMenuItemSpriteExtra::create(
+            ButtonSprite::create("The Seven Seas"),
             this,
-            menu_selector(SpinOffMenu::onWorld)
+            menu_selector(SpinOffMenu::onSevenSeas)
         );
 
-        // Bouton SubZero (Niveau 3001)
-        auto btnSubZero = CCMenuItemSpriteExtra::create(
-            ButtonSprite::create("SubZero"),
-            this,
-            menu_selector(SpinOffMenu::onSubZero)
-        );
-
-        levelMenu->addChild(btnMeltdown);
-        levelMenu->addChild(btnWorld);
-        levelMenu->addChild(btnSubZero);
-
+        levelMenu->addChild(btnPressStart);
+        levelMenu->addChild(btnSevenSeas);
         levelMenu->alignItemsVerticallyWithPadding(15.0f);
         this->addChild(levelMenu);
 
         return true;
     }
 
+    void openLevel(int levelID) {
+        auto level = GJGameLevel::create();
+        level->m_levelID = levelID;
+        auto scene = LevelInfoLayer::scene(level, false);
+        CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
+    }
+
     void onBack(CCObject*) {
         CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, MenuLayer::scene(false)));
     }
 
-    void onMeltdown(CCObject*) {
-        auto scene = LevelSelectLayer::scene(1001);
-        CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
+    void onPressStart(CCObject*) {
+        // Charge la page du niveau Press Start
+        openLevel(39000000);
     }
 
-    void onWorld(CCObject*) {
-        auto scene = LevelSelectLayer::scene(2001);
-        CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
-    }
-
-    void onSubZero(CCObject*) {
-        auto scene = LevelSelectLayer::scene(3001);
-        CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
+    void onSevenSeas(CCObject*) {
+        // Charge la page du niveau The Seven Seas
+        openLevel(15000000);
     }
 
 public:
