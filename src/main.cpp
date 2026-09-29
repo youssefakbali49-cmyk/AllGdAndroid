@@ -3,7 +3,8 @@
 
 using namespace geode::prelude;
 
-class SpinOffMenu : public CCLayer {
+// ÉTAPE 2 : Menu de choix entre SubZero, Meltdown et World
+class SpinOffSelectMenu : public CCLayer {
 protected:
     bool init() override {
         if (!CCLayer::init()) return false;
@@ -19,72 +20,78 @@ protected:
             this->addChild(bg, -1);
         }
 
-        // Bouton Retour
+        // Bouton Retour (Étape 1)
         auto backBtn = CCMenuItemSpriteExtra::create(
             ButtonSprite::create("Back"),
             this,
-            menu_selector(SpinOffMenu::onBack)
+            menu_selector(SpinOffSelectMenu::onBack)
         );
         auto backMenu = CCMenu::create();
         backMenu->addChild(backBtn);
         backMenu->setPosition({35, winSize.height - 25});
         this->addChild(backMenu);
 
-        // Titre
-        auto label = CCLabelBMFont::create("Spin-off Levels", "bigFont.fnt");
-        label->setPosition({winSize.width / 2, winSize.height - 35});
-        this->addChild(label);
+        // Menu horizontal pour les 3 cartes/boutons
+        auto gamesMenu = CCMenu::create();
 
-        // Menu de boutons
-        auto levelMenu = CCMenu::create();
-        levelMenu->setPosition(winSize / 2);
-
-        // Bouton Press Start (SubZero)
-        auto btnPressStart = CCMenuItemSpriteExtra::create(
-            ButtonSprite::create("Press Start"),
+        // Bouton GD SubZero
+        auto btnSubZero = CCMenuItemSpriteExtra::create(
+            ButtonSprite::create("GD SubZero"),
             this,
-            menu_selector(SpinOffMenu::onPressStart)
+            menu_selector(SpinOffSelectMenu::onSubZero)
         );
 
-        // Bouton The Seven Seas (Meltdown)
-        auto btnSevenSeas = CCMenuItemSpriteExtra::create(
-            ButtonSprite::create("The Seven Seas"),
+        // Bouton GD Meltdown
+        auto btnMeltdown = CCMenuItemSpriteExtra::create(
+            ButtonSprite::create("GD Meltdown"),
             this,
-            menu_selector(SpinOffMenu::onSevenSeas)
+            menu_selector(SpinOffSelectMenu::onMeltdown)
         );
 
-        levelMenu->addChild(btnPressStart);
-        levelMenu->addChild(btnSevenSeas);
-        levelMenu->alignItemsVerticallyWithPadding(15.0f);
-        this->addChild(levelMenu);
+        // Bouton GD World
+        auto btnWorld = CCMenuItemSpriteExtra::create(
+            ButtonSprite::create("GD World"),
+            this,
+            menu_selector(SpinOffSelectMenu::onWorld)
+        );
+
+        gamesMenu->addChild(btnSubZero);
+        gamesMenu->addChild(btnMeltdown);
+        gamesMenu->addChild(btnWorld);
+
+        gamesMenu->alignItemsHorizontallyWithPadding(15.0f);
+        gamesMenu->setPosition(winSize / 2);
+        this->addChild(gamesMenu);
 
         return true;
-    }
-
-    void openLevel(int levelID) {
-        auto level = GJGameLevel::create();
-        level->m_levelID = levelID;
-        auto scene = LevelInfoLayer::scene(level, false);
-        CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
     }
 
     void onBack(CCObject*) {
         CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, MenuLayer::scene(false)));
     }
 
-    void onPressStart(CCObject*) {
-        // Charge la page du niveau Press Start
-        openLevel(39000000);
+    // ÉTAPE 3 : Redirection vers les carrousels de niveaux
+    void onSubZero(CCObject*) {
+        // Ouvre le carrousel SubZero (Press Start, etc.)
+        auto scene = LevelSelectLayer::scene(4001); 
+        CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
     }
 
-    void onSevenSeas(CCObject*) {
-        // Charge la page du niveau The Seven Seas
-        openLevel(15000000);
+    void onMeltdown(CCObject*) {
+        // Ouvre le carrousel Meltdown (The Seven Seas, etc.)
+        auto scene = LevelSelectLayer::scene(1001);
+        CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
+    }
+
+    void onWorld(CCObject*) {
+        // Ouvre le carrousel World (Payload, etc.)
+        auto scene = LevelSelectLayer::scene(2001);
+        CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
     }
 
 public:
-    static SpinOffMenu* create() {
-        auto ret = new SpinOffMenu();
+    static SpinOffSelectMenu* create() {
+        auto ret = new SpinOffSelectMenu();
         if (ret && ret->init()) {
             ret->autorelease();
             return ret;
@@ -95,14 +102,15 @@ public:
 
     static CCScene* scene() {
         auto scene = CCScene::create();
-        scene->addChild(SpinOffMenu::create());
+        scene->addChild(SpinOffSelectMenu::create());
         return scene;
     }
 };
 
+// ÉTAPE 1 : Interception du bouton More Games
 class $modify(MyMenuLayer, MenuLayer) {
     void onMoreGames(CCObject* sender) {
-        auto scene = SpinOffMenu::scene();
+        auto scene = SpinOffSelectMenu::scene();
         CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
     }
 };
